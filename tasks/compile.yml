@@ -7,6 +7,24 @@
     path: "~/ModSecurity"
   register: modsecurity_folder
 
+- name: Set nginx_modules_location if not already set
+  set_fact:
+    nginx_modules_location: "{{ nginx_conf_dir }}/modules"
+  when: nginx_modules_location is not defined
+
+- name: Clear previous compilation
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "~/ModSecurity"
+    - "~/ModSecurity-nginx"
+    - "~/Nginx"
+    - "/tmp/nginx-*.tar.gz"
+    - "{{ nginx_modules_location }}/ngx_http_modsecurity_module.so"
+    - "{{ nginx_conf_dir }}/modsec/"
+  when: nginx_modsec3_crs3_force_compile
+
 - name: Obtain Modsecurity source code for branch v3/master
   git:
     repo: "https://github.com/owasp-modsecurity/ModSecurity"
@@ -32,7 +50,6 @@
     - "make"
     - "make install"
   when: not modsec3_present or nginx_modsec3_crs3_force_compile
-
 
 - name: Obtain Modsecurity-nginx source code
   git:
@@ -100,10 +117,7 @@
     chdir: "~/Nginx/nginx-{{ nginx_modsec3_crs3_nginx_version }}"
     creates: "~/Nginx/nginx-{{ nginx_modsec3_crs3_nginx_version }}/objs/ngx_http_modsecurity_module.so"
   with_items:
-<<<<<<< HEAD
-=======
     - "CFLAGS=-Wno-error ./configure --with-compat --add-dynamic-module=../../ModSecurity-nginx"
->>>>>>> 5286972 (refactor: extract & paint)
     - "make modules"
   when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
@@ -112,12 +126,14 @@
     file: "../jdauphant.nginx/vars/Debian.yml"
   when:
     - ansible_os_family == "Debian"
+    #- nginx_python_selinux_pkgs is not defined
 
 - name: import nginx role RedHat/Centos/OracleLinux vars
   include_vars:
     file: "../jdauphant.nginx/vars/Redhat.yml"
   when:
     - ansible_os_family == "RedHat"
+    #- nginx_python_selinux_pkgs is not defined
 
 - name: set nginx_conf_dir if not already set
   set_fact:
