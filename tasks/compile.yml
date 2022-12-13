@@ -7,9 +7,15 @@
     path: "~/ModSecurity"
   register: modsecurity_folder
 
-- name: Set nginx_modules_location if not already set
+- name: Get Nginx modules location
+  shell: nginx -V 2>&1 | grep "configure arguments:" | sed -e 's/.*--modules-path=\([^ ]*\).*/\1/'
+  register: _nginx_modules_location
+  changed_when: false
+  when: nginx_modules_location is not defined
+
+- name: Set variable nginx_modules_location
   set_fact:
-    nginx_modules_location: "{{ nginx_conf_dir }}/modules"
+    nginx_modules_location: "{{ _nginx_modules_location.stdout }}"
   when: nginx_modules_location is not defined
 
 - name: Clear previous compilation
@@ -143,7 +149,7 @@
 - name: Copy ModSecurity-nginx to Nginx modules folder
   copy:
     src: "~/Nginx/nginx-{{ nginx_modsec3_crs3_nginx_version }}/objs/ngx_http_modsecurity_module.so"
-    dest: "{{ nginx_modules_location }}"
+    dest: "{{ nginx_modules_location }}/ngx_http_modsecurity_module.so"
     remote_src: yes
   when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 

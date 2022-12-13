@@ -13,21 +13,41 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: run Nginx selinux tasks
+- name: Save the current list of packages for Debian/Ubuntu
+  shell: dpkg-query -l > /tmp/before.txt
+  when: ansible_os_family == "Debian" and ( nginx_modsec3_crs3_keep is undefined or not nginx_modsec3_crs3_keep )
+
+- name: Save the current list of packages for RHEL/Centos
+  shell: rpm -qa > /tmp/before.txt
+  when: ansible_os_family == 'RedHat' and ( nginx_modsec3_crs3_keep is undefined or not nginx_modsec3_crs3_keep )
+
+- name: Installing compiler dependencies for Debian/Ubuntu
+  apt:
+    name: "{{ nginx_modsec3_crs3_debian_compiler_reqs }}"
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Installing compiler dependencies for RHEL/Centos
+  yum:
+    name: "{{ nginx_modsec3_crs3_redhat_compiler_reqs }}"
+    state: present
+  when: ansible_os_family == "Redhat"
+
+- name: Run Nginx SElinux tasks
   include_role:
     name: jdauphant.nginx
     tasks_from: selinux.yml
     allow_duplicates: yes
   when: ansible_selinux and ansible_selinux.status == "enabled"
 
-- name: run Nginx nginx offical repo tasks
+- name: Run Nginx official repo tasks
   include_role:
     name: jdauphant.nginx
     tasks_from: nginx-official-repo.yml
     allow_duplicates: yes
   when: nginx_official_repo == True
 
-- name: run Nginx install packages tasks
+- name: Run Nginx install packages tasks
   include_role:
     name: jdauphant.nginx
     tasks_from: installation.packages.yml
@@ -63,12 +83,15 @@
   set_fact:
     nginx_modsec3_crs3_nginx_version: "{{ ansible_facts.packages.nginx[0].version.split('-')[0] }}"
 
-- name: Compile ModSecurity3 , install OWAPS CRS3, and build nginx modules
-  import_tasks: compile.yml
+- name: Get Nginx conf location
+  shell: dirname $(nginx -V 2>&1 | grep "configure arguments:" | sed -e 's/.*--conf-path=\([^ ]*\).*/\1/')
+  register: _nginx_conf_location
+  changed_when: false
+  when: nginx_conf_dir is not defined
 
-- name: Set nginx_conf_dir if not already set
+- name: Set variable nginx_conf_dir
   set_fact:
-    nginx_conf_dir: "/etc/nginx"
+    nginx_conf_dir: "{{ _nginx_conf_location.stdout }}"
   when: nginx_conf_dir is not defined
 
 - name: Check if ModSecurity3 is present
