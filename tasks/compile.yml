@@ -31,6 +31,8 @@
     - "./configure --with-pcre2"
     - "make"
     - "make install"
+  when: not modsec3_present or nginx_modsec3_crs3_force_compile
+
 
 - name: Obtain Modsecurity-nginx source code
   git:
@@ -38,6 +40,7 @@
     dest: "~/ModSecurity-nginx"
     depth: 1
     force: yes
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
 - name: Obtain GeoIP2 module source code
   git:
@@ -49,22 +52,27 @@
   get_url:
     url: "https://nginx.org/download/nginx-{{ nginx_modsec3_crs3_nginx_version }}.tar.gz"
     dest: "/tmp/nginx-{{ nginx_modsec3_crs3_nginx_version }}.tar.gz"
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
 - name: Create folder for Nginx source code
   file:
     path: "~/Nginx"
     state: directory
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
 - name: Extract Nginx source code
   unarchive:
     src: "/tmp/nginx-{{ nginx_modsec3_crs3_nginx_version }}.tar.gz"
     dest: "~/Nginx"
     remote_src: yes
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
+
 
 - name: Get configure arguments
   shell:  "nginx -V  2>&1 | awk -F ':' '/configure arguments/{print $2}'"
   register: configargs
   changed_when: False
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
 - name: Run configure for building nginx modules
   shell: >
@@ -92,17 +100,22 @@
     chdir: "~/Nginx/nginx-{{ nginx_modsec3_crs3_nginx_version }}"
     creates: "~/Nginx/nginx-{{ nginx_modsec3_crs3_nginx_version }}/objs/ngx_http_modsecurity_module.so"
   with_items:
+<<<<<<< HEAD
+=======
+    - "CFLAGS=-Wno-error ./configure --with-compat --add-dynamic-module=../../ModSecurity-nginx"
+>>>>>>> 5286972 (refactor: extract & paint)
     - "make modules"
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
 - name: import nginx role Debian/Ubuntu vars
   include_vars:
-    file: "../ansible-role-nginx/vars/Debian.yml"
+    file: "../jdauphant.nginx/vars/Debian.yml"
   when:
     - ansible_os_family == "Debian"
 
 - name: import nginx role RedHat/Centos/OracleLinux vars
   include_vars:
-    file: "../ansible-role-nginx/vars/RedHat.yml"
+    file: "../jdauphant.nginx/vars/Redhat.yml"
   when:
     - ansible_os_family == "RedHat"
 
@@ -116,6 +129,7 @@
     src: "~/Nginx/nginx-{{ nginx_modsec3_crs3_nginx_version }}/objs/ngx_http_modsecurity_module.so"
     dest: "{{ nginx_modules_location }}"
     remote_src: yes
+  when: not modsec3_nginx_present or nginx_modsec3_crs3_force_compile
 
 - name: Copy GeoIP module to Nginx modules folder
   copy:
@@ -138,6 +152,7 @@
     #path: /etc/nginx/modsec
     path: "{{ nginx_conf_dir }}/modsec"
     state: directory
+  when: not crs3_present or nginx_modsec3_crs3_force_compile
 
 - name: Check if modsecurity.conf already exists
   stat:
@@ -149,15 +164,14 @@
     src: "~/ModSecurity/modsecurity.conf-recommended"
     dest: "{{ nginx_conf_dir }}/modsec/modsecurity.conf"
     remote_src: yes
-  register: modsecurity_conf_copied
-  changed_when: modsecurity_conf_copied.changed
-  when: not modsecurity_conf_stat.stat.exists 
+  when: not crs3_present or nginx_modsec3_crs3_force_compile
 
 - name: Copy unicode.mapping file also
   copy:
     src: "~/ModSecurity/unicode.mapping"
     dest: "{{ nginx_conf_dir }}/modsec/unicode.mapping"
     remote_src: yes
+  when: not crs3_present or nginx_modsec3_crs3_force_compile
 
 - name: Activate blocking rather than detection only
   replace:
@@ -165,22 +179,25 @@
     regexp: "SecRuleEngine DetectionOnly"
     replace: "SecRuleEngine On"
     backup: yes
-  when: modsecurity_conf_copied.changed
+  when: nginx_modsec3_crs3_block_mode == true and (not crs3_present or nginx_modsec3_crs3_force_compile)
+
 
 - name: Create a main.conf from template
   template:
     src: main.conf.j2
     dest: "{{ nginx_conf_dir }}/modsec/main.conf"
+  when: not crs3_present or nginx_modsec3_crs3_force_compile
 
 - name: Obtain OWASP Modsecurity Rules
   git:
     repo: "https://github.com/coreruleset/coreruleset"
     dest: "{{ nginx_conf_dir }}/modsec/owasp-modsecurity-crs"
-    #version: "v3.3.5"
     version: "{{ nginx_modsec3_crs3_core_rule_set_version }}"
+  when: not crs3_present or nginx_modsec3_crs3_force_compile
 
 - name: Copy crs-setup.conf.example to become crs-setup.conf
   copy:
     src: "{{ nginx_conf_dir }}/modsec/owasp-modsecurity-crs/crs-setup.conf.example"
     dest: "{{ nginx_conf_dir }}/modsec/owasp-modsecurity-crs/crs-setup.conf"
     remote_src: yes
+  when: not crs3_present or nginx_modsec3_crs3_force_compile

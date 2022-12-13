@@ -1,7 +1,9 @@
 ---
-# defaults file for ansible-role-nginx-modsec3-crs3
-
-# These are packages you want kept even after compiling has finished
+# defaults file for coopdevs.nginx_modsec3_crs
+nginx_modsec3_enabled: True
+nginx_modsec3_crs_version: v3.4/dev
+nginx_modsec3_crs3_force_compile: False
+nginx_modsec3_crs3_block_mode: True
 nginx_modsec3_crs3_debian_pre_reqs:
   - git
   - libgeoip-dev
@@ -49,3 +51,4 @@ nginx_modsec3_crs3_geoip_enabled: false
 nginx_modsec3_crs3_maxmind_enabled: false
 
 nginx_modsec3_crs3_core_rule_set_version: "v4.0.0"
+nginx_official_repo: True
