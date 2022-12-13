@@ -34,7 +34,3 @@ galaxy_info:
   - nginx
   - web
   - system
-
-dependencies: 
-  - role: jdauphant.nginx
-    version: v2.21.2
