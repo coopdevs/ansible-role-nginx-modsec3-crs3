@@ -71,16 +71,19 @@
   stat:
     path: /usr/local/modsecurity/lib/libmodsecurity.so
   register: modsec3_present
+  when: not nginx_modsec3_crs3_force_compile
 
 - name: Check if modsecurity-nginx is present
   stat:
     path: /usr/lib/nginx/modules/ngx_http_modsecurity_module.so
   register: modsec3_nginx_present
+  when: not nginx_modsec3_crs3_force_compile
   
 - name: Check if OWASP CRS3 is present
   stat:
     path: /etc/nginx/modsec/owasp-modsecurity-crs/crs-setup.conf
   register: crs3_present
+  when: not nginx_modsec3_crs3_force_compile
 
 - name: Compile ModSecurity3 and install OWAPS CRS3
   include: compile.yml
@@ -108,3 +111,4 @@
     name: "{{ installed.stdout_lines }}"
     state: absent
   when: installed is defined and (nginx_modsec3_crs3_keep is undefined or not nginx_modsec3_crs3_keep)
+  
