@@ -1,11 +1,11 @@
 galaxy_info:
-  author: "Perry Kollmorgen (https://github.com/perryk)"
-  role_name: nginx_modsec3_crs3
-  description: "Installs Nginx, Compiles ModSecurity3, and downloads the OWASP CRS ruleset (https://nginx.com, https://owasp.org/, https://coreruleset.org/)"
+  author: "Coopdevs (https://github.com/coopdevs)"
+  role_name: "nginx_modsec3_crs"
+  description: "Installs Nginx, Compiles ModSecurity3, and downloads the OWASP CRS v3 ruleset. Forked from Perry Kollmorgen's role (https://github.com/perryk) "
 
-  license: MIT
+  license: "GPL-3.0-or-later"
 
-  min_ansible_version: 2.4
+  min_ansible_version: "2.4"
 
   platforms:
   - name: EL
@@ -33,6 +33,7 @@ galaxy_info:
     - impish
     - jammy
     - mantic
+    - noble  
 
   galaxy_tags:
   - modsecurity
@@ -43,4 +44,5 @@ galaxy_info:
   - web
   - system
 
-dependencies: []
+dependencies: 
+  - role: jdauphant.nginx
