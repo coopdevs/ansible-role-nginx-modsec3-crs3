@@ -1,7 +1,7 @@
 # nginx_modsec3_crs role
 ## Ansible role for Installing Nginx, compiling ModSecurity3, and installing the OWASP CRS v3 ruleset 
 
-Forked from @perryk's [ansible-role-nginx-modsec3-crs3](https://github.com/perryk/ansible-role-nginx-modsec3-crs3)
+Forked from @perryk [ansible-role-nginx-modsec3-crs3](https://github.com/perryk/ansible-role-nginx-modsec3-crs3)
 
 There are a number of libraries and packages which ModSecurity3 depends on and will be installed via this role.
 
@@ -79,10 +79,10 @@ Example playbook calling the role adding and enabling ModSecurity for the defaul
 
 # License
 
-MIT
+GPL-3.0-or-later
 
 ## Author Information
 
-Perry Kollmorgen - https://github.com/perryk
+Perry Kollmorgen - https://github.com/perryk  
 Coopdevs - https://coopdevs.org
 
