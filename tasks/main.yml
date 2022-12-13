@@ -1,5 +1,5 @@
 ---
-# tasks file for ansible-role-nginx-modsec3-crs3
+# tasks file for jdauphant.nginx-modsec3-crs3
 
 - name: Installing Pre-Reqs for Debian/Ubuntu
   apt:
@@ -54,16 +54,37 @@
     allow_duplicates: yes
 #  when: nginx_installation_type == "packages"
 
-- name: get the rpm or apt package facts
+- name: Get the rpm or apt package facts
   package_facts:
     manager: "auto"
 
-- name: record nginx version
+- name: Record nginx version
   set_fact:
     nginx_modsec3_crs3_nginx_version: "{{ ansible_facts.packages.nginx[0].version.split('-')[0] }}"
 
+- name: Set nginx_conf_dir if not already set
+  set_fact:
+    nginx_conf_dir: "/etc/nginx"
+  when: nginx_conf_dir is not defined
+
+- name: Check if ModSecurity3 is present
+  stat:
+    path: /usr/local/modsecurity/lib/libmodsecurity.so
+  register: modsec3_present
+
+- name: Check if modsecurity-nginx is present
+  stat:
+    path: /usr/lib/nginx/modules/ngx_http_modsecurity_module.so
+  register: modsec3_nginx_present
+  
+- name: Check if OWASP CRS3 is present
+  stat:
+    path: /etc/nginx/modsec/owasp-modsecurity-crs/crs-setup.conf
+  register: crs3_present
+
 - name: Compile ModSecurity3 and install OWAPS CRS3
   include: compile.yml
+  when: nginx_modsec3_enabled
 
 - name: Configure Nginx now that the Modsec module is built
   import_role:
