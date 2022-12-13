@@ -30,10 +30,6 @@ i.e this in the requirements.yml file for your project's playbook (not the requi
 - src: jdauphant.nginx
   version: v2.21.2
 ```
-
-Other dependencies are embedded in Ansible Galaxy's metadata, who should take care of install them: 
-- `jdauphant.nginx` at version v2.21.2
-
 ## Role Variables
 
 Browse the role's [defaults/main.yml](defaults/main.yml) and [vars/main.yml](vars/main.yml) files to see if there is anything you would like to change or need to override by setting in your playbook.
@@ -62,6 +58,7 @@ Example playbook calling the role adding and enabling ModSecurity for the defaul
 - hosts: servers
 
   vars:
+    nginx_modsec3_enabled: True
     nginx_modsec3_crs_version: v4.0/dev
     nginx_pkgs:
       - nginx
