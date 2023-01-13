@@ -7,11 +7,11 @@ There are a number of libraries and packages which ModSecurity3 depends on and w
 
 This role will additionally install any compilers and other build tools required for compilation. It will then remove these tools if they were not previously installed. 
 
-Nginx support is primarily provided by the dependent role `ansible-role-nginx` by jdauphant.
+Nginx support is primarily provided by the dependent role `ansible-role-nginx` by nginxinc.
 
-https://github.com/jdauphant/ansible-role-nginx
+https://github.com/nginxinc/ansible-role-nginx
 
-:warning:  jdauphant's nginx role is no longer mantained.
+:warning:  nginxinc's nginx role is no longer mantained.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ i.e this in the requirements.yml file for your project's playbook (not the requi
 ```yml
 - src: coopdevs.nginx_modsec3_crs
 
-- src: jdauphant.nginx
+- src: nginxinc.nginx
   version: v2.21.2
 ```
 ## Role Variables
@@ -47,7 +47,7 @@ nginx_modsec3_crs3_force_compile: True
 nginx_modsec3_crs3_block_mode: True
 ```
 
-There are lots of variables more in the nginx role, perhaps the best explanation of these are all the examples in the role [README.md](https://github.com/jdauphant/ansible-role-nginx/blob/master/README.md) file.
+There are lots of variables more in the nginx role, perhaps the best explanation of these are all the examples in the role [README.md](https://github.com/nginxinc/ansible-role-nginx/blob/master/README.md) file.
 
 
 ## Example Playbook
@@ -84,3 +84,7 @@ GPL-3.0-or-later
 Perry Kollmorgen - https://github.com/perryk  
 [Coopdevs](https://coopdevs.org) - https://github.com/coopdevs
 
+
+
+## Comandes útils
+ansible-playbook tests/provision.yml -i tests/inventory -u root

@@ -87,14 +87,14 @@
 
 - name: import nginx role Debian/Ubuntu vars
   include_vars:
-    file: "../jdauphant.nginx/vars/Debian.yml"
+    file: "../nginxinc.nginx/vars/Debian.yml"
   when:
     - ansible_os_family == "Debian"
     #- nginx_python_selinux_pkgs is not defined
 
 - name: import nginx role Redhat/Centos vars
   include_vars:
-    file: "../jdauphant.nginx/vars/Redhat.yml"
+    file: "../nginxinc.nginx/vars/Redhat.yml"
   when:
     - ansible_os_family == "Redhat"
     #- nginx_python_selinux_pkgs is not defined

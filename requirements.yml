@@ -1,3 +1,9 @@
 ---
-- src: jdauphant.nginx
-  version: v2.21.2
+
+
+collections:
+  - community.general
+
+roles:
+- src: nginxinc.nginx
+  version: 0.23.2

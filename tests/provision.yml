@@ -1,0 +1,6 @@
+- name: provision
+  hosts: all
+  become: true
+  roles:
+    - role: nginx_modsec3_crs-role
+

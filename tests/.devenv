@@ -1,0 +1,6 @@
+# Vars to use in lxc-create
+NAME="nginx"
+DISTRIBUTION="ubuntu"
+RELEASE="focal"
+ARCH="amd64"
+HOST="$NAME.local"
