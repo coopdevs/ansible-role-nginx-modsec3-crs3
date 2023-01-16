@@ -15,6 +15,9 @@ nginx_modsec3_crs3_debian_pre_reqs:
   - ssdeep
   - libfuzzy-dev
   - git
+  - zlib1g-dev
+  - m4
+  - autoconf
 
 nginx_modsec3_crs3_debian_compiler_reqs:
   - build-essential

@@ -43,16 +43,9 @@
 - name: Run Nginx official repo tasks
   include_role:
     name: nginxinc.nginx
-#    tasks_from: nginx-official-repo.yml
     allow_duplicates: yes
   when: nginx_official_repo == True
 
-#- name: Run Nginx install packages tasks
-#  include_role:
-#    name: nginxinc.nginx
-#    tasks_from: installation.packages.yml
-#    allow_duplicates: yes
-#  when: nginx_installation_type == "packages"
 
 - name: Get the rpm or apt package facts
   package_facts:
@@ -95,9 +88,12 @@
   include: compile.yml
   when: nginx_modsec3_enabled
 
-- name: Configure Nginx now that the Modsec module is built
-  import_role:
-    name: nginxinc.nginx
+# TODO nginx_config
+#- name: Configure Nginx now that the Modsec module is built
+#  import_role:
+#    name: nginxinc.nginx
+
+
 
 - name: Check which packages were installed for Debian/Ubuntu
   shell: dpkg-query -l > /tmp/after.txt
