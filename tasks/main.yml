@@ -42,9 +42,7 @@
 
 - name: Run Nginx official repo tasks
   include_role:
-    name: jdauphant.nginx
-    tasks_from: nginx-official-repo.yml
-    allow_duplicates: yes
+    name: nginxinc.nginx
   when: nginx_official_repo == True
 
 # - name: Run Nginx install packages tasks
@@ -97,7 +95,7 @@
 
 - name: Configure Nginx now that the Modsec module is built
   import_role:
-    name: jdauphant.nginx
+    name: nginxinc.nginx_config
 
 - name: Check which packages were installed for Debian/Ubuntu
   shell: dpkg-query -l > /tmp/after.txt
