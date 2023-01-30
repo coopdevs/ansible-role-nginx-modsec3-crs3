@@ -115,3 +115,9 @@
     name: "{{ installed.stdout_lines }}"
     state: absent
   when: installed is defined and (nginx_modsec3_crs3_keep is undefined or not nginx_modsec3_crs3_keep)
+
+
+- name: Run Nginx official repo tasks
+  include_role:
+    name: nginxinc.nginx
+  when: nginx_official_repo == True
