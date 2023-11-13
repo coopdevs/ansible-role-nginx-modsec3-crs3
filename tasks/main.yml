@@ -33,25 +33,23 @@
     state: present
   when: ansible_os_family == "Redhat"
 
-- name: Run Nginx SElinux tasks
-  include_role:
-    name: jdauphant.nginx
-    tasks_from: selinux.yml
-    allow_duplicates: yes
-  when: ansible_selinux and ansible_selinux.status == "enabled"
+# - name: Run Nginx SElinux tasks
+#   include_role:
+#     name: nginxinc.nginx
+#     tasks_from: selinux.yml
+#     allow_duplicates: yes
+#   when: ansible_selinux and ansible_selinux.status == "enabled"
 
 - name: Run Nginx official repo tasks
   include_role:
-    name: jdauphant.nginx
-    tasks_from: nginx-official-repo.yml
-    allow_duplicates: yes
+    name: nginxinc.nginx
   when: nginx_official_repo == True
 
-- name: Run Nginx install packages tasks
-  include_role:
-    name: jdauphant.nginx
-    tasks_from: installation.packages.yml
-    allow_duplicates: yes
+# - name: Run Nginx install packages tasks
+#   include_role:
+#     name: jdauphant.nginx
+#     tasks_from: installation.packages.yml
+#     allow_duplicates: yes
 #  when: nginx_installation_type == "packages"
 
 - name: Get the rpm or apt package facts
@@ -97,7 +95,7 @@
 
 - name: Configure Nginx now that the Modsec module is built
   import_role:
-    name: jdauphant.nginx
+    name: nginxinc.nginx_config
 
 - name: Check which packages were installed for Debian/Ubuntu
   shell: dpkg-query -l > /tmp/after.txt
@@ -117,3 +115,9 @@
     name: "{{ installed.stdout_lines }}"
     state: absent
   when: installed is defined and (nginx_modsec3_crs3_keep is undefined or not nginx_modsec3_crs3_keep)
+
+
+- name: Run Nginx official repo tasks
+  include_role:
+    name: nginxinc.nginx
+  when: nginx_official_repo == True
