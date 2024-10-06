@@ -113,7 +113,7 @@
   when: not nginx_modsec3_crs3_force_compile
 
 - name: Compile ModSecurity3 and install OWAPS CRS3
-  include: compile.yml
+  include_tasks: compile.yml
   when: nginx_modsec3_enabled
 
 - name: Configure Nginx now that the Modsec module is built
